@@ -29,5 +29,25 @@ contract('advanced deployment', function(accounts) {
         
         assert.strictEqual(newnum.toNumber(), 4, 'new contract not deployed correctly');
 
+    });
+
+    it("should deploy Sample with constructor input through artifacts object", async function() {
+        let newlivefactory = await LiveFactory.new(); 
+        //Go TRUFFLE!!
+        let thesamplecode = Sample._json.bytecode;
+
+        let _constructorInput = toBytes32(99);
+
+        let newinput = thesamplecode + _constructorInput.toString().substring(2, _constructorInput.length); 
+
+        let newsamplecontract = await newlivefactory.deployCode(newinput); 
+
+        let newresult = newsamplecontract.logs[0].args.deployedAddress; 
+
+        let num = await Sample.at(newresult).thenum.call(); 
+
+        assert.strictEqual(num.toNumber(), 99, 'new contract not deployed correctly');
+
+        
     })
 }); 
